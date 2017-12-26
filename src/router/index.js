@@ -34,37 +34,74 @@ export const constantRouterMap = [
     }]
   },
 
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: _import('table/index'),
-        meta: { title: 'Table', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: _import('tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
-      }
-    ]
-  },
+  // {
+  //   path: '/example',
+  //   component: Layout,
+  //   redirect: '/example/table',
+  //   name: 'Example',
+  //   meta: { title: 'Example', icon: 'example' },
+  //   children: [
+  //     {
+  //       path: 'table',
+  //       name: 'Table',
+  //       component: _import('table/index'),
+  //       meta: { title: 'Table', icon: 'table' }
+  //     },
+  //     {
+  //       path: 'tree',
+  //       name: 'Tree',
+  //       component: _import('tree/index'),
+  //       meta: { title: 'Tree', icon: 'tree' }
+  //     }
+  //   ]
+  // },
+  //
+  // {
+  //   path: '/form',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'Form',
+  //       component: _import('form/index'),
+  //       meta: { title: 'Form', icon: 'form' }
+  //     }
+  //   ]
+  // },
 
   {
-    path: '/form',
+    path: '/system',
     component: Layout,
+    redirect: 'noredirect',
+    name: 'system-router',
+    meta: {
+      title: '系统设置',
+      icon: 'form'
+    },
     children: [
+      // {
+      //   path: 'index',
+      //   name: 'index',
+      //   component: _import('system/index'),
+      //   meta: { title: 'Form' }
+      // },
       {
-        path: 'index',
-        name: 'Form',
-        component: _import('form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        path: 'user',
+        name: 'user',
+        component: _import('system/user'),
+        meta: { title: '用户管理' }
+      },
+      {
+        path: 'role',
+        name: 'role',
+        component: _import('system/role'),
+        meta: { title: '角色管理' }
+      },
+      {
+        path: 'permission',
+        name: 'permission',
+        component: _import('system/permission'),
+        meta: { title: '权限管理' }
       }
     ]
   },
