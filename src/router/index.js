@@ -68,12 +68,42 @@ export const constantRouterMap = [
   //     }
   //   ]
   // },
+  {
+    path: '/weixin',
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'weixin',
+    meta: {
+      title: '微信管理',
+      icon: 'form'
+    },
+    children: [
+      // {
+      //   path: 'index',
+      //   name: 'index',
+      //   component: _import('system/index'),
+      //   meta: { title: 'Form' }
+      // },
+      {
+        path: 'menu',
+        name: 'user',
+        component: _import('weixin/menu'),
+        meta: { title: '菜单管理' }
+      },
+      {
+        path: 'menu',
+        name: 'user',
+        component: _import('weixin/menu'),
+        meta: { title: '菜单管理' }
+      }
+    ]
+  },
 
   {
     path: '/system',
     component: Layout,
     redirect: 'noredirect',
-    name: 'system-router',
+    name: 'system',
     meta: {
       title: '系统设置',
       icon: 'form'
