@@ -15,10 +15,13 @@ import store from './store'
 import '@/icons' // icon
 import '@/permission' // permission control
 import DataTables from 'vue-data-tables'
+import { DataTablesServer } from 'vue-data-tables'
+import './mock'
 
 // Vue.use(ElementUI, { locale })
 Vue.use(ElementUI)
 Vue.use(DataTables)
+Vue.use(DataTablesServer)
 
 Vue.config.productionTip = false
 

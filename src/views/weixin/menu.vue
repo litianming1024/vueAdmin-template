@@ -269,7 +269,7 @@
     border: solid 1px #e7e7eb;
     position: relative;
     margin: 0 auto;
-    background: transparent url(/assets/wx/bg_mobile_head.png) no-repeat 0 0 / 100%;
+    background: transparent url(../../assets/weixin/bg_mobile_head.png) no-repeat 0 0 / 100%;
   }
 
   .menulist {
@@ -279,7 +279,7 @@
     right: 0;
     margin: 0;
     border-top: 1px solid #e7e7eb;
-    background: transparent url(/assets/wx/bg_mobile_foot.png) no-repeat 0 0;
+    background: transparent url(../../assets/weixin/bg_mobile_foot.png) no-repeat 0 0;
     padding-left: 43px;
   }
 
