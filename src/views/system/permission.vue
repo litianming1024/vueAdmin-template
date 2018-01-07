@@ -1,13 +1,14 @@
 <template>
   <div class="app-container calendar-list-container">
     <data-tables-server :total="total" :actions-def="actionsDef" :checkbox-filter-def="checkFilterDef"
-                 :action-col-def="actionColDef" :load-data="loadData">
-      <el-table-column v-for="title in titles" :key="title" :prop="title.prop" :label="title.label" sortable="custom">
+                 :action-col-def="actionColDef" :load-data="loadData"
+                        :data="tableData">
+      <el-table-column v-for="title in titles" :key="title.id" :prop="title.prop" :label="title.label" sortable="custom">
       </el-table-column>
     </data-tables-server>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" center>
-      <el-form :rules="rules" ref="dataForm" :model="temp" label-width="100px">
+      <el-form v-if="dialogStatus!='delete'" :rules="rules" ref="dataForm" :model="temp" label-width="100px">
         <!--label-position="left" label-width="70px" style='width: 400px; margin-left:50px;'-->
         <el-form-item label="中文名">
           <el-input v-model="temp.cname" placeholder="中文名" :disabled="dialogFormEdit"></el-input>
@@ -20,6 +21,7 @@
         <el-button @click="dialogFormVisible = false">取消</el-button>
         <el-button v-if="dialogStatus=='create'" type="primary" @click="createData">确认</el-button>
         <el-button v-if="dialogStatus=='update'" type="primary" @click="updateData">确认</el-button>
+        <el-button v-if="dialogStatus=='delete'" type="danger" @click="deleteData">删除</el-button>
       </div>
     </el-dialog>
   </div>
@@ -32,9 +34,15 @@
     name: 'permission',
     data() {
       return {
-        tabledata: [],
+        tableData: [{
+          id: 1,
+          cname: 'li'
+        }],
         total: 0,
         titles: [{
+          prop: 'id',
+          label: 'id'
+        }, {
           prop: 'cname',
           label: '中文名'
         }, {
@@ -48,9 +56,11 @@
         textMap: {
           update: '编辑',
           create: '添加',
-          info: '详情'
+          info: '详情',
+          delete: '删除'
         },
         temp: {
+          id: Number,
           cname: '',
           ename: ''
         },
@@ -114,8 +124,7 @@
             name: '删除',
             type: 'danger',
             handler: row => {
-              this.$message('delete clicked')
-              console.log('RUA in row clicked', row)
+              this.handleDelete(row)
             }
           }]
         }
@@ -127,8 +136,8 @@
       loadData(queryInfo) {
         return permissionApi.fetchList(queryInfo).then(response => {
           console.log(response)
-          this.tableData = response.data
-          this.total = response.total
+          this.tableData = response.data.content
+          this.total = response.data.totalElements
         })
       },
       resetTemp() {
@@ -147,8 +156,8 @@
         this.dialogFormEditChange(false)
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
-            permissionApi.create(this.temp).then(() => {
-              // this.list.unshift(this.temp)
+            permissionApi.createData(this.temp).then(() => {
+              this.list.unshift(this.temp)
               this.dialogFormVisible = false
               this.$notify({
                 title: '成功',
@@ -173,11 +182,11 @@
           if (valid) {
             const tempData = Object.assign({}, this.temp)
             // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-            permissionApi.update(tempData).then(() => {
-              for (const v of this.tabledata) {
+            permissionApi.updateData(tempData).then(() => {
+              for (const v of this.tableData) {
                 if (v.id === this.temp.id) {
-                  const index = this.list.indexOf(v)
-                  this.list.splice(index, 1, this.temp)
+                  const index = this.tableData.indexOf(v)
+                  this.tableData.splice(index, 1, this.temp)
                   break
                 }
               }
@@ -189,6 +198,30 @@
               })
             })
           }
+        })
+      },
+      handleDelete(row) {
+        this.temp = Object.assign({}, row)
+        this.dialogStatus = 'delete'
+        this.dialogFormVisible = true
+      },
+      deleteData() {
+        const tempData = Object.assign({}, this.temp)
+        permissionApi.deleteData(tempData.id).then(() => {
+          for (const v of this.tableData) {
+            if (v.id === this.temp.id) {
+              const index = this.tableData.indexOf(v)
+              this.tableData.splice(index, 1, this.temp)
+              break
+            }
+          }
+          this.dialogFormVisible = false
+          this.$notify({
+            title: '成功',
+            message: '删除成功',
+            type: 'success',
+            duration: 2000
+          })
         })
       },
       handleDownload() {

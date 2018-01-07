@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function fetchList(query) {
   return request({
-    url: '/authority',
+    url: '/user',
     method: 'get',
     params: query
   })
@@ -24,10 +24,9 @@ export function updateData(data) {
   })
 }
 
-export function deleteData(data) {
+export function deleteData(id) {
   return request({
-    url: '/authority',
-    method: 'delete',
-    data
+    url: '/authority/' + id,
+    method: 'delete'
   })
 }
