@@ -1,7 +1,7 @@
 <template>
   <div class="app-container calendar-list-container">
     <data-tables-server :total="total" :actions-def="actionsDef" :checkbox-filter-def="checkFilterDef"
-                 :action-col-def="actionColDef" :load-data="loadData"
+                        :action-col-def="actionColDef" :load-data="loadData"
                         :data="tableData" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="35"></el-table-column>
       <el-table-column type="expand">
@@ -38,7 +38,7 @@
   import * as permissionApi from '@/api/system/permission'
 
   export default {
-    name: 'permission',
+    name: 'retestAppointment',
     data() {
       return {
         tableData: [{
@@ -232,7 +232,7 @@
           this.$notify({
             message: '删除失败',
             type: 'error',
-            duration: 2000
+            duration: 600000
           })
         })
         this.dialogFormVisible = false

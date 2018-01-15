@@ -33,41 +33,48 @@ export const constantRouterMap = [
       component: _import('dashboard/index')
     }]
   },
-
-  // {
-  //   path: '/example',
-  //   component: Layout,
-  //   redirect: '/example/table',
-  //   name: 'Example',
-  //   meta: { title: 'Example', icon: 'example' },
-  //   children: [
-  //     {
-  //       path: 'table',
-  //       name: 'Table',
-  //       component: _import('table/index'),
-  //       meta: { title: 'Table', icon: 'table' }
-  //     },
-  //     {
-  //       path: 'tree',
-  //       name: 'Tree',
-  //       component: _import('tree/index'),
-  //       meta: { title: 'Tree', icon: 'tree' }
-  //     }
-  //   ]
-  // },
-  //
-  // {
-  //   path: '/form',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       name: 'Form',
-  //       component: _import('form/index'),
-  //       meta: { title: 'Form', icon: 'form' }
-  //     }
-  //   ]
-  // },
+  {
+    path: '/recruitment',
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'recruitment',
+    children: [
+      {
+        path: 'recruitment',
+        // name: 'recruitment',
+        component: _import('recruitment/recruitment'),
+        meta: { title: '职位管理' }
+      }
+    ]
+  },
+  {
+    path: '/resume',
+    component: Layout,
+    redirect: 'noredirect',
+    // name: 'resume',
+    children: [
+      {
+        path: 'resume',
+        name: 'resume',
+        component: _import('resume/resume'),
+        meta: { title: '简历管理' }
+      }
+    ]
+  },
+  {
+    path: '/apply',
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'apply',
+    children: [
+      {
+        path: 'apply',
+        name: 'apply',
+        component: _import('apply/apply'),
+        meta: { title: '投递记录管理' }
+      }
+    ]
+  },
   {
     path: '/weixin',
     component: Layout,
@@ -78,12 +85,6 @@ export const constantRouterMap = [
       icon: 'form'
     },
     children: [
-      // {
-      //   path: 'index',
-      //   name: 'index',
-      //   component: _import('system/index'),
-      //   meta: { title: 'Form' }
-      // },
       {
         path: 'menu',
         name: 'user',
@@ -95,6 +96,42 @@ export const constantRouterMap = [
         name: 'user',
         component: _import('weixin/menu'),
         meta: { title: '菜单管理' }
+      }
+    ]
+  },
+  {
+    path: '/appointment',
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'appointment',
+    meta: {
+      title: '面试管理',
+      icon: 'lock'
+    },
+    children: [
+      // {
+      //   path: 'index',
+      //   name: 'index',
+      //   component: _import('system/index'),
+      //   meta: { title: 'Form' }
+      // },
+      {
+        path: 'firstAppointment',
+        name: 'firstAppointment',
+        component: _import('appointment/firstAppointment'),
+        meta: { title: '初试管理' }
+      },
+      {
+        path: 'retestAppointment',
+        name: 'retestAppointment',
+        component: _import('appointment/retestAppointment'),
+        meta: { title: '复试管理' }
+      },
+      {
+        path: 'permission',
+        name: 'permission',
+        component: _import('system/permission'),
+        meta: { title: 'HR面试管理' }
       }
     ]
   },

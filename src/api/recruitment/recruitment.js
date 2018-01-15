@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-const resUrl = '/authority'
+const resUrl = '/recruitment'
 
 export function fetchList(query) {
   return request({
