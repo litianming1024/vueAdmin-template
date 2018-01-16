@@ -139,6 +139,9 @@
           tableColProps: {
             align: 'center'
           },
+          colProps: {
+            span: 12
+          },
           def: [{
             name: '编辑',
             type: 'primary',
@@ -166,6 +169,7 @@
       },
       resetTemp() {
         this.temp = {
+          id: Number
         }
       },
       handleCreate() {
@@ -223,7 +227,7 @@
         })
       },
       handleDelete(row) {
-        this.temp = Object.assign({}, row)
+        this.temp = row
         this.dialogStatus = 'delete'
         this.dialogFormVisible = true
       },

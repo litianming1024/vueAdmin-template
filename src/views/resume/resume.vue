@@ -7,11 +7,16 @@
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item v-for="title in extraTitles" :key="title.id" :label="title.label">
+              <span>{{ props.row[title.prop] }}</span>
+            </el-form-item>
             <el-form-item v-for="title in titles" :key="title.id" :label="title.label">
               <span>{{ props.row[title.prop] }}</span>
             </el-form-item>
           </el-form>
         </template>
+      </el-table-column>
+      <el-table-column v-for="title in extraTitles" :key="title.id" :prop="title.prop" :label="title.label" sortable="custom">
       </el-table-column>
       <el-table-column v-for="title in titles" :key="title.id" :prop="title.prop" :label="title.label" sortable="custom">
       </el-table-column>
@@ -21,7 +26,7 @@
       <el-form v-if="dialogStatus!='delete'" :rules="rules" ref="dataForm" :model="temp" label-width="100px">
         <!--label-position="left" label-width="70px" style='width: 400px; margin-left:50px;'-->
         <el-form-item v-for="title in titles" :key="title.prop" :label="title.label" :model="temp[title.prop]">
-          <el-input v-model="temp[title.prop]" placeholder="" ></el-input>
+          <el-input v-model="temp[title.prop]" placeholder="" type="textarea" autosize></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -31,39 +36,58 @@
         <el-button v-if="dialogStatus=='delete'" type="danger" @click="deleteData">删除</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="预览" :visible.sync="previewDialogVisible" fullscreen>
+      <preview :data="temp">
+      </preview>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="previewDialogVisible = false">取消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-  import * as permissionApi from '@/api/system/permission'
-
+  import * as recruitmentApi from '@/api/resume/resume'
+  import Preview from '@/components/resume/preview'
   export default {
-    name: 'permission',
+    components: { Preview },
+    name: 'resume',
     data() {
       return {
-        tableData: [{
-          id: 1,
-          cname: 'li',
-          ename: 'li'
-        }, {
-          id: 1,
-          cname: 'li',
-          ename: 'li'
-        }],
+        tableData: [],
         total: 0,
-        titles: [{
+        extraTitles: [{
           prop: 'id',
-          label: 'id'
-        }, {
-          prop: 'cname',
-          label: '中文名'
-        }, {
-          prop: 'ename',
-          label: '英文名'
-        }, {
-          prop: 'ename',
-          label: '英文名'
+          label: '序号'
         }],
+        titles: [{
+          prop: 'name',
+          label: '职位名称'
+        }, {
+          prop: 'workplace',
+          label: '工作地点'
+        }, {
+          prop: 'category',
+          label: '职位类别'
+        }, {
+          prop: 'responsibility',
+          label: '工作职责'
+        }, {
+          prop: 'requirement',
+          label: '工作要求'
+        }, {
+          prop: 'type',
+          label: '招聘渠道'
+        }],
+        temp: {
+          name: '',
+          workplace: '',
+          category: '',
+          responsibility: '',
+          requirement: '',
+          type: ''
+        },
+        previewDialogVisible: false,
         downloadLoading: false,
         dialogFormVisible: false,
         dialogStatus: '',
@@ -72,11 +96,6 @@
           update: '编辑',
           create: '添加',
           delete: '删除'
-        },
-        temp: {
-          id: Number,
-          cname: '',
-          ename: ''
         },
         rules: {},
         actionsDef: {
@@ -129,11 +148,14 @@
           tableColProps: {
             align: 'center'
           },
+          colProps: {
+            span: 12
+          },
           def: [{
-            name: '编辑',
+            name: '预览',
             type: 'primary',
             handler: row => {
-              this.handleUpdate(row)
+              this.handlePreview(row)
             }
           }, {
             name: '删除',
@@ -149,14 +171,14 @@
     },
     methods: {
       loadData(queryInfo) {
-        return permissionApi.fetchList(queryInfo).then(response => {
-          console.log(response)
+        return recruitmentApi.fetchList(queryInfo).then(response => {
           this.tableData = response.data.content
           this.total = response.data.totalElements
         })
       },
       resetTemp() {
         this.temp = {
+          id: Number
         }
       },
       handleCreate() {
@@ -170,8 +192,8 @@
       createData() {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
-            permissionApi.createData(this.temp).then(() => {
-              this.list.unshift(this.temp)
+            recruitmentApi.createData(this.temp).then((response) => {
+              this.tableData.unshift(response.data)
               this.dialogFormVisible = false
               this.$notify({
                 title: '成功',
@@ -195,7 +217,7 @@
           if (valid) {
             const tempData = Object.assign({}, this.temp)
             // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-            permissionApi.updateData(tempData.id, tempData).then(() => {
+            recruitmentApi.updateData(tempData.id, tempData).then(() => {
               for (const v of this.tableData) {
                 if (v.id === this.temp.id) {
                   const index = this.tableData.indexOf(v)
@@ -214,12 +236,12 @@
         })
       },
       handleDelete(row) {
-        this.temp = Object.assign({}, row)
+        this.temp = row
         this.dialogStatus = 'delete'
         this.dialogFormVisible = true
       },
       deleteData() {
-        permissionApi.deleteData(this.temp.id).then(() => {
+        recruitmentApi.deleteData(this.temp.id).then(() => {
           const index = this.tableData.indexOf(this.temp)
           this.tableData.splice(index, 1)
           this.$notify({
@@ -232,7 +254,7 @@
           this.$notify({
             message: '删除失败',
             type: 'error',
-            duration: 600000
+            duration: 2000
           })
         })
         this.dialogFormVisible = false
@@ -262,6 +284,10 @@
       },
       handleDeleteSelection() {
 
+      },
+      handlePreview(row) {
+        this.temp = row
+        this.previewDialogVisible = true
       }
     }
   }
