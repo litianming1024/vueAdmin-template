@@ -4,15 +4,15 @@
                         :action-col-def="actionColDef" :load-data="loadData"
                         :data="tableData" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="35"></el-table-column>
-      <el-table-column type="expand">
-        <template slot-scope="props">
-          <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item v-for="title in titles" :key="title.id" :label="title.label">
-              <span>{{ props.row[title.prop] }}</span>
-            </el-form-item>
-          </el-form>
-        </template>
-      </el-table-column>
+      <!--<el-table-column type="expand">-->
+        <!--<template slot-scope="props">-->
+          <!--<el-form label-position="left" inline class="demo-table-expand">-->
+            <!--<el-form-item v-for="title in titles" :key="title.id" :label="title.label">-->
+              <!--<span>{{ props.row[title.prop] }}</span>-->
+            <!--</el-form-item>-->
+          <!--</el-form>-->
+        <!--</template>-->
+      <!--</el-table-column>-->
       <el-table-column v-for="title in titles" :key="title.id" :prop="title.prop" :label="title.label" sortable="custom">
       </el-table-column>
     </data-tables-server>
@@ -31,42 +31,43 @@
         <el-button v-if="dialogStatus=='delete'" type="danger" @click="deleteData">删除</el-button>
       </div>
     </el-dialog>
+    <el-dialog :visible.sync="previewDialogVisible" fullscreen center>
+      <preview :data="previewData">
+      </preview>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="previewDialogVisible = false">取消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-  import * as permissionApi from '@/api/system/permission'
+  import * as applyApi from '@/api/apply/apply'
+  import Preview from '@/components/resume/preview'
+  import * as resumeApi from '@/api/resume/resume'
 
   export default {
     name: 'permission',
+    components: { Preview },
     data() {
       return {
-        tableData: [{
-          id: 1,
-          cname: 'li',
-          ename: 'li'
-        }, {
-          id: 1,
-          cname: 'li',
-          ename: 'li'
-        }],
+        tableData: [],
         total: 0,
         titles: [{
           prop: 'id',
           label: 'id'
         }, {
-          prop: 'cname',
-          label: '中文名'
+          prop: 'basicInfoName',
+          label: '姓名'
         }, {
-          prop: 'ename',
-          label: '英文名'
-        }, {
-          prop: 'ename',
-          label: '英文名'
+          prop: 'recruitmentName',
+          label: '岗位'
         }],
         downloadLoading: false,
         dialogFormVisible: false,
         dialogStatus: '',
+        previewDialogVisible: false,
+        previewData: {},
         multipleSelection: [],
         textMap: {
           update: '编辑',
@@ -75,8 +76,7 @@
         },
         temp: {
           id: Number,
-          cname: '',
-          ename: ''
+          cname: ''
         },
         rules: {},
         actionsDef: {
@@ -130,16 +130,10 @@
             align: 'center'
           },
           def: [{
-            name: '编辑',
+            name: '筛选',
             type: 'primary',
             handler: row => {
-              this.handleUpdate(row)
-            }
-          }, {
-            name: '删除',
-            type: 'danger',
-            handler: row => {
-              this.handleDelete(row)
+              this.handlePreview(row)
             }
           }]
         }
@@ -149,8 +143,7 @@
     },
     methods: {
       loadData(queryInfo) {
-        return permissionApi.fetchList(queryInfo).then(response => {
-          console.log(response)
+        return applyApi.fetchList(queryInfo).then(response => {
           this.tableData = response.data.content
           this.total = response.data.totalElements
         })
@@ -170,7 +163,7 @@
       createData() {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
-            permissionApi.createData(this.temp).then(() => {
+            applyApi.createData(this.temp).then(() => {
               this.list.unshift(this.temp)
               this.dialogFormVisible = false
               this.$notify({
@@ -182,12 +175,11 @@
           }
         })
       },
-      handleUpdate(row) {
-        this.temp = Object.assign({}, row) // copy obj
-        this.dialogStatus = 'update'
-        this.dialogFormVisible = true
-        this.$nextTick(() => {
-          this.$refs['dataForm'].clearValidate()
+      handlePreview(row) {
+        // this.previewData = Object.assign({}, row) // copy obj
+        this.previewDialogVisible = true
+        resumeApi.getData(row.resumeId).then(response => {
+          this.previewData = response.data
         })
       },
       updateData() {
@@ -195,7 +187,7 @@
           if (valid) {
             const tempData = Object.assign({}, this.temp)
             // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-            permissionApi.updateData(tempData.id, tempData).then(() => {
+            applyApi.updateData(tempData.id, tempData).then(() => {
               for (const v of this.tableData) {
                 if (v.id === this.temp.id) {
                   const index = this.tableData.indexOf(v)
@@ -219,7 +211,7 @@
         this.dialogFormVisible = true
       },
       deleteData() {
-        permissionApi.deleteData(this.temp.id).then(() => {
+        applyApi.deleteData(this.temp.id).then(() => {
           const index = this.tableData.indexOf(this.temp)
           this.tableData.splice(index, 1)
           this.$notify({

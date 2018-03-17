@@ -12,73 +12,130 @@
           </div>
           <div class="info">
             <p class="info-list">
-              <span>{{data.basicInfo.sex}}</span>
+              <span>{{sexOptions[data.basicInfo.sex]}}</span>
               <i class="gap">|</i>
               <span>{{data.basicInfo.birthday}}</span>
               <i class="gap">|</i>
-              <span>
+              <span v-if="data.basicInfo.idcard">
                 <span>身份证</span>
                 {{data.basicInfo.idcard}}
               </span>
             </p>
             <p class="info-list">手机号：{{data.basicInfo.tel}}</p>
             <p class="info-list">邮箱：{{data.basicInfo.email}}</p>
-            <p class="info-list">期望薪资:{{data.basicInfo.salary}}</p>
+            <!--<p class="info-list">期望薪资:{{data.basicInfo.salary}}</p>-->
           </div>
         </div>
       </div>
       <!-- 教育信息 -->
       <template v-if="data.educations">
-      <div class="preview-item">
-        <h2>教育信息</h2>
-        <div class="content">
-          <dl class="content-list">
-            <dt v-for="education in data.educations">
-              <span>{{education.educationStartTime}}至{{education.educationEndTime}}</span>
-              <i class="gap">|</i>
-              <span>{{education.schoolName}}</span>
-              <i class="gap">|</i>
-              <span>
-                <span>{{education.education}}</span>
+        <div class="preview-item">
+          <h2>教育信息</h2>
+          <div class="content">
+            <dl class="content-list">
+              <dt v-for="education in data.educations">
+                <span>{{education.startTime}}至{{education.endTime}}</span>
+                <i class="gap">|</i>
+                <span>{{education.schoolName}}</span>
+                <i class="gap">|</i>
+                <span>
+                <span>{{eduExperienceValue[education.degree]}}</span>
               </span>
-              <i class="gap">|</i>
-              <span>
-                <span>{{education.degree}}</span>
-                -<span>{{education.major}}</span>
-              </span>
-            </dt>
-          </dl>
+                <i class="gap">|</i>
+                <span>{{education.major}}</span>
+              </dt>
+            </dl>
+          </div>
         </div>
-      </div>
       </template>
 
       <template v-if="data.experiences">
-      <div class="preview-item">
-        <h2>实践经验</h2>
-        <div class="content">
-          <dl class="content-list">
-            <template v-for="experience in data.experiences">
-            <dt>{{experience.workStartTime}}至{{experience.workEndTime}}&nbsp;&nbsp;{{experience.projectName}}
-            </dt>
-            <dd>
-              <p>项目内容：</p>
-              <p>{{experience.responsibility}}</p>
-            </dd>
-            </template>
-          </dl>
+        <div class="preview-item">
+          <h2>实践经验</h2>
+          <div class="content">
+            <dl class="content-list">
+              <template v-for="experience in data.experiences">
+                <dt>{{experience.startTime}}至{{experience.endTime}}&nbsp;&nbsp;{{experience.companyName}}&nbsp;&nbsp;{{experience.positionName}}
+                </dt>
+                <dd v-if="experience.responsibility">
+                  <p>项目内容：</p>
+                  <p>{{experience.responsibility}}</p>
+                </dd>
+              </template>
+            </dl>
+          </div>
         </div>
-      </div>
       </template>
     </div>
   </div>
 </template>
 
 <script>
+  const eduExperienceOpt = [
+    {
+      value: 1,
+      label: '初中及以下'
+    },
+    {
+      value: 2,
+      label: '高中'
+    },
+    {
+      value: 3,
+      label: '中技'
+    },
+    {
+      value: 4,
+      label: '中专'
+    },
+    {
+      value: 5,
+      label: '大专'
+    },
+    {
+      value: 6,
+      label: '本科'
+    },
+    {
+      value: 7,
+      label: '研究生'
+    },
+    {
+      value: 8,
+      label: 'EMBA'
+    },
+    {
+      value: 9,
+      label: 'MBA'
+    },
+    {
+      value: 10,
+      label: '博士'
+    },
+    {
+      value: 11,
+      label: '其他'
+    }
+  ]
+  const eduExperienceValue = eduExperienceOpt.reduce((acc, cur) => {
+    acc[cur.value] = cur.label
+    return acc
+  }, {})
+
   export default {
     name: 'preview',
     props: {
       data: {
         type: Object
+      }
+    },
+    data() {
+      return {
+        sexOptions: {
+          0: '男',
+          1: '女'
+        },
+        eduExperienceValue
       }
     }
   }

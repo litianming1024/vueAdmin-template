@@ -163,7 +163,7 @@
           }
         })
       },
-      handleUpdate(row) {
+      handlePreview(row) {
         this.dialogFormEditChange(false)
         this.temp = Object.assign({}, row) // copy obj
         this.dialogStatus = 'update'

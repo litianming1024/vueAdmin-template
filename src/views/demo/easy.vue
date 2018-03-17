@@ -16,16 +16,9 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column v-for="title in extraTitles" :key="title.id" :prop="title.prop" :label="title.label"
-                       sortable="custom">
+      <el-table-column v-for="title in extraTitles" :key="title.id" :prop="title.prop" :label="title.label" sortable="custom">
       </el-table-column>
-      <el-table-column v-for="title in titles" :key="title.id" :prop="title.prop" :label="title.label"
-                       sortable="custom">
-      </el-table-column>
-      <el-table-column label="状态">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{statusType[scope.row.status].label}}</el-tag>
-        </template>
+      <el-table-column v-for="title in titles" :key="title.id" :prop="title.prop" :label="title.label" sortable="custom">
       </el-table-column>
     </data-tables-server>
 
@@ -34,12 +27,6 @@
         <!--label-position="left" label-width="70px" style='width: 400px; margin-left:50px;'-->
         <el-form-item v-for="title in titles" :key="title.prop" :label="title.label" :model="temp[title.prop]">
           <el-input v-model="temp[title.prop]" placeholder="" type="textarea" autosize></el-input>
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-select v-model="temp.status" placeholder="请选择">
-            <el-option v-for="statue in statusType" :key="statue.key" :label="statue.label" :value="statue.key">
-            </el-option>
-          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -55,12 +42,8 @@
 <script>
   import * as recruitmentApi from '@/api/recruitment/recruitment'
 
-  const statusType = [
-    { key: 0, label: '失效' },
-    { key: 1, label: '生效' }
-  ]
   export default {
-    name: 'recruitment',
+    name: 'easy',
     data() {
       return {
         tableData: [],
@@ -79,24 +62,22 @@
           prop: 'category',
           label: '职位类别'
         }, {
-          prop: 'team',
-          label: '招聘部门'
-        }, {
           prop: 'responsibility',
           label: '工作职责'
         }, {
           prop: 'requirement',
           label: '工作要求'
+        }, {
+          prop: 'type',
+          label: '招聘渠道'
         }],
-        statusType,
         temp: {
           name: '',
           workplace: '',
           category: '',
           responsibility: '',
           requirement: '',
-          team: '',
-          status: ''
+          type: ''
         },
         downloadLoading: false,
         dialogFormVisible: false,
@@ -177,15 +158,6 @@
         }
       }
     },
-    filters: {
-      statusFilter(status) {
-        const statusMap = {
-          0: 'danger',
-          1: 'success'
-        }
-        return statusMap[status]
-      }
-    },
     created() {
     },
     methods: {
@@ -197,8 +169,7 @@
       },
       resetTemp() {
         this.temp = {
-          id: Number,
-          status: 1
+          id: Number
         }
       },
       handleCreate() {
@@ -279,25 +250,6 @@
         })
         this.dialogFormVisible = false
       },
-      handleDownload() {
-        this.downloadLoading = true
-        import('@/vendor/Export2Excel').then(excel => {
-          const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-          const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
-          const data = this.formatJson(filterVal, this.list)
-          excel.export_json_to_excel(tHeader, data, 'table-list')
-          this.downloadLoading = false
-        })
-      },
-      formatJson(filterVal, jsonData) {
-        return jsonData.map(v => filterVal.map(j => {
-          if (j === 'timestamp') {
-            // return parseTime(v[j])
-          } else {
-            return v[j]
-          }
-        }))
-      },
       handleSelectionChange(val) {
         this.multipleSelection = val
         console.log(val)
@@ -313,12 +265,10 @@
   .demo-table-expand {
     font-size: 0;
   }
-
   .demo-table-expand label {
     width: 90px;
     color: #99a9bf;
   }
-
   .demo-table-expand .el-form-item {
     margin-right: 0;
     margin-bottom: 0;

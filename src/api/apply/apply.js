@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-const resUrl = '/resume'
+const resUrl = '/apply'
 
 export function fetchList(query) {
   return request({
@@ -30,12 +30,5 @@ export function deleteData(id) {
   return request({
     url: resUrl + '/' + id,
     method: 'delete'
-  })
-}
-
-export function getData(id) {
-  return request({
-    url: resUrl + '/' + id,
-    method: 'get'
   })
 }

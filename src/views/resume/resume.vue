@@ -36,7 +36,7 @@
         <el-button v-if="dialogStatus=='delete'" type="danger" @click="deleteData">删除</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="预览" :visible.sync="previewDialogVisible" fullscreen>
+    <el-dialog :visible.sync="previewDialogVisible" fullscreen center>
       <preview :data="temp">
       </preview>
       <div slot="footer" class="dialog-footer">
@@ -49,6 +49,7 @@
 <script>
   import * as recruitmentApi from '@/api/resume/resume'
   import Preview from '@/components/resume/preview'
+
   export default {
     components: { Preview },
     name: 'resume',
