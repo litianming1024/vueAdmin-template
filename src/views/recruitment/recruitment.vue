@@ -24,7 +24,9 @@
       </el-table-column>
       <el-table-column label="状态">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{statusType[scope.row.status].label}}</el-tag>
+          <!--<el-tag :type="scope.row.status | statusFilter">{{statusType[scope.row.status].label}}</el-tag>-->
+          <el-tag :type="statusType[scope.row.status].type">{{statusType[scope.row.status].label}}</el-tag>
+
         </template>
       </el-table-column>
     </data-tables-server>
@@ -56,8 +58,8 @@
   import * as recruitmentApi from '@/api/recruitment/recruitment'
 
   const statusType = [
-    { key: 0, label: '失效' },
-    { key: 1, label: '生效' }
+    { key: 0, label: '失效', type: 'danger' },
+    { key: 1, label: '生效', type: 'success' }
   ]
   export default {
     name: 'recruitment',
@@ -224,7 +226,7 @@
           }
         })
       },
-      handlePreview(row) {
+      handleUpdate(row) {
         this.temp = Object.assign({}, row) // copy obj
         this.dialogStatus = 'update'
         this.dialogFormVisible = true
