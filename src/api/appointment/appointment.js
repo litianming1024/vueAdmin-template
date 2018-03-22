@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-const resUrl = '/apply'
+const resUrl = '/appointment'
 
 export function fetchList(query) {
   return request({
@@ -33,7 +33,7 @@ export function deleteData(id) {
   })
 }
 
-export function fetchByStatus(query) {
+export function fetchByApplyStatus(query) {
   return request({
     url: resUrl + '/applyStatus',
     method: 'get',
@@ -41,9 +41,9 @@ export function fetchByStatus(query) {
   })
 }
 
-export function getData(id) {
+export function findLatest(id) {
   return request({
-    url: resUrl + '/' + id,
+    url: resUrl + '/apply/' + id,
     method: 'get'
   })
 }

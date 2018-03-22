@@ -100,6 +100,20 @@ export const constantRouterMap = [
     ]
   },
   {
+    path: '/schedule',
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'schedule',
+    children: [
+      {
+        path: 'schedule',
+        // name: 'recruitment',
+        component: _import('schedule/schedule'),
+        meta: { title: '面试安排' }
+      }
+    ]
+  },
+  {
     path: '/appointment',
     component: Layout,
     redirect: 'noredirect',

@@ -18,10 +18,16 @@ import DataTables from 'vue-data-tables'
 import { DataTablesServer } from 'vue-data-tables'
 import './mock'
 
+import * as filters from './filters'
+
 // Vue.use(ElementUI, { locale })
 Vue.use(ElementUI)
 Vue.use(DataTables)
 Vue.use(DataTablesServer)
+
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
+})
 
 Vue.config.productionTip = false
 

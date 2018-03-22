@@ -1,21 +1,8 @@
 <template>
   <div class="app-container calendar-list-container">
-    <data-tables-server :total="total" :actions-def="actionsDef" :checkbox-filter-def="checkFilterDef"
+    <data-tables-server :total="total" :actions-def="actionsDef"
                         :action-col-def="actionColDef" :load-data="loadData"
-                        :data="tableData" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="35"></el-table-column>
-      <el-table-column type="expand">
-        <template slot-scope="props">
-          <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item v-for="title in extraTitles" :key="title.id" :label="title.label">
-              <span>{{ props.row[title.prop] }}</span>
-            </el-form-item>
-            <el-form-item v-for="title in titles" :key="title.id" :label="title.label">
-              <span>{{ props.row[title.prop] }}</span>
-            </el-form-item>
-          </el-form>
-        </template>
-      </el-table-column>
+                        :data="tableData" >
       <el-table-column v-for="title in extraTitles" :key="title.id" :prop="title.prop" :label="title.label" sortable="custom">
       </el-table-column>
       <el-table-column v-for="title in titles" :key="title.id" :prop="title.prop" :label="title.label" sortable="custom">
@@ -99,38 +86,6 @@
             handler: () => {
               this.handleCreate()
             }
-          }, {
-            name: '导入',
-            icon: 'el-icon-upload',
-            handler: () => {
-              this.$message('import clicked')
-            }
-          }, {
-            name: '导出',
-            icon: 'el-icon-download',
-            handler: () => {
-              this.handleDownload()
-            }
-          }, {
-            name: '批量删除',
-            icon: 'el-icon-warning',
-            type: 'danger',
-            handler: () => {
-              this.handleDeleteSelection()
-            }
-          }]
-        },
-        checkFilterDef: {
-          colProps: {
-            span: 4
-          },
-          props: 'flow_type_code',
-          def: [{
-            'code': 'repair',
-            'name': 'Repair'
-          }, {
-            'code': 'help',
-            'name': 'Help'
           }]
         },
         actionColDef: {
@@ -195,7 +150,7 @@
           }
         })
       },
-      handlePreview(row) {
+      handleUpdate(row) {
         this.temp = Object.assign({}, row) // copy obj
         this.dialogStatus = 'update'
         this.dialogFormVisible = true
@@ -207,7 +162,6 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             const tempData = Object.assign({}, this.temp)
-            // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
             recruitmentApi.updateData(tempData.id, tempData).then(() => {
               for (const v of this.tableData) {
                 if (v.id === this.temp.id) {
@@ -249,29 +203,8 @@
           })
         })
         this.dialogFormVisible = false
-      },
-      handleSelectionChange(val) {
-        this.multipleSelection = val
-        console.log(val)
-      },
-      handleDeleteSelection() {
-
       }
     }
   }
 </script>
 
-<style>
-  .demo-table-expand {
-    font-size: 0;
-  }
-  .demo-table-expand label {
-    width: 90px;
-    color: #99a9bf;
-  }
-  .demo-table-expand .el-form-item {
-    margin-right: 0;
-    margin-bottom: 0;
-    width: 50%;
-  }
-</style>

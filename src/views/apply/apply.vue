@@ -15,6 +15,11 @@
       <!--</el-table-column>-->
       <el-table-column v-for="title in titles" :key="title.id" :prop="title.prop" :label="title.label" sortable="custom">
       </el-table-column>
+      <el-table-column label="状态">
+        <template slot-scope="scope">
+          <el-tag :type="applyStatusType[scope.row.applyStatus].type">{{applyStatusType[scope.row.applyStatus].label}}</el-tag>
+        </template>
+      </el-table-column>
     </data-tables-server>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" center>
@@ -35,6 +40,10 @@
       <preview :data="previewData">
       </preview>
       <div slot="footer" class="dialog-footer">
+        <template v-if="applyData.applyStatus < 3">
+          <el-button type="success" @click="handleChangeApplyStatus(3)">通过</el-button>
+          <el-button type="danger" @click="handleChangeApplyStatus(1)">未通过</el-button>
+        </template>
         <el-button @click="previewDialogVisible = false">取消</el-button>
       </div>
     </el-dialog>
@@ -45,9 +54,10 @@
   import * as applyApi from '@/api/apply/apply'
   import Preview from '@/components/resume/preview'
   import * as resumeApi from '@/api/resume/resume'
+  import applyStatusType from '@/utils/applyStatusType'
 
   export default {
-    name: 'permission',
+    name: 'apply',
     components: { Preview },
     data() {
       return {
@@ -78,6 +88,8 @@
           id: Number,
           cname: ''
         },
+        applyStatusType,
+        applyData: {},
         rules: {},
         actionsDef: {
           colProps: {
@@ -143,15 +155,16 @@
     },
     methods: {
       loadData(queryInfo) {
-        return applyApi.fetchList(queryInfo).then(response => {
+        queryInfo.applyStatus = [0, 1, 2]
+        return applyApi.fetchByStatus(queryInfo).then(response => {
           this.tableData = response.data.content
           this.total = response.data.totalElements
         })
       },
-      resetTemp() {
-        this.temp = {
-        }
-      },
+      // resetTemp() {
+      //   this.temp = {
+      //   }
+      // },
       handleCreate() {
         this.resetTemp()
         this.dialogStatus = 'create'
@@ -178,6 +191,7 @@
       handlePreview(row) {
         // this.previewData = Object.assign({}, row) // copy obj
         this.previewDialogVisible = true
+        this.applyData = row
         resumeApi.getData(row.resumeId).then(response => {
           this.previewData = response.data
         })
@@ -228,6 +242,26 @@
           })
         })
         this.dialogFormVisible = false
+      },
+      handleChangeApplyStatus(status) {
+        this.previewDialogVisible = false
+        const tempData = Object.assign({}, this.applyData)
+        tempData.applyStatus = status
+        applyApi.updateData(tempData.id, tempData).then((res) => {
+          for (const v of this.tableData) {
+            if (v.id === this.applyData.id) {
+              const index = this.tableData.indexOf(v)
+              this.tableData.splice(index, 1, res.data)
+              break
+            }
+          }
+          this.dialogFormVisible = false
+          this.$notify({
+            title: '成功',
+            message: '更新成功',
+            type: 'success'
+          })
+        })
       },
       handleDownload() {
         this.downloadLoading = true
