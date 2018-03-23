@@ -59,6 +59,7 @@
         },
         applyData: [],
         applyStatusType,
+        interviewType: 0,
         downloadLoading: false,
         dialogFormVisible: false,
         dialogStatus: '',
@@ -110,11 +111,13 @@
         this.$nextTick(() => {
           this.$refs['dataForm'].clearValidate()
         })
+        this.interviewTypeSwitch(this.applyData.applyStatus)
         if (this.applyData.applyStatus === 3 || this.applyData.applyStatus === 7 || this.applyData.applyStatus === 11) {
           this.resetTemp()
           this.temp.applyId = this.applyData.id
+          this.temp.interviewType = this.interviewType
         } else {
-          appointmentApi.findLatest(this.applyData.id).then((res) => {
+          appointmentApi.applyAndInterview(this.applyData.id, this.interviewType).then((res) => {
             this.temp = Object.assign({}, res.data)
           })
         }
@@ -123,20 +126,24 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             if (this.applyData.applyStatus === 3 || this.applyData.applyStatus === 7 || this.applyData.applyStatus === 11) {
-              this.temp.applyStatus += 1
-              appointmentApi.createData(this.temp).then((res) => {
-                for (const v of this.tableData) {
-                  if (v.id === res.applyId) {
-                    v.applyStatus = res.applyStatus
-                    break
-                  }
+              this.applyData.applyStatus += 1
+              applyApi.updateData(this.applyData.id, this.applyData).then((res) => {
+                if (res.data.applyStatus === this.applyData.applyStatus) {
+                  appointmentApi.createData(this.temp).then((res) => {
+                    for (const v of this.tableData) {
+                      if (v.id === res.applyId) {
+                        v.applyStatus = res.applyStatus
+                        break
+                      }
+                    }
+                    this.dialogFormVisible = false
+                    this.$notify({
+                      title: '成功',
+                      message: '安排成功',
+                      type: 'success'
+                    })
+                  })
                 }
-                this.dialogFormVisible = false
-                this.$notify({
-                  title: '成功',
-                  message: '安排成功',
-                  type: 'success'
-                })
               })
             } else {
               const tempData = Object.assign({}, this.temp)
@@ -159,29 +166,15 @@
           }
         })
       },
-      handleDelete(row) {
-        this.temp = row
-        this.dialogStatus = 'delete'
-        this.dialogFormVisible = true
-      },
-      deleteData() {
-        applyApi.deleteData(this.temp.id).then(() => {
-          const index = this.tableData.indexOf(this.temp)
-          this.tableData.splice(index, 1)
-          this.$notify({
-            title: '成功',
-            message: '删除成功',
-            type: 'success',
-            duration: 2000
-          })
-        }).catch(() => {
-          this.$notify({
-            message: '删除失败',
-            type: 'error',
-            duration: 2000
-          })
-        })
-        this.dialogFormVisible = false
+      interviewTypeSwitch(applyStatus) {
+        switch (applyStatus) {
+          case 3:
+          case 4: this.interviewType = 0; break
+          case 7:
+          case 8: this.interviewType = 1; break
+          case 11:
+          case 12: this.interviewType = 3; break
+        }
       }
     }
   }

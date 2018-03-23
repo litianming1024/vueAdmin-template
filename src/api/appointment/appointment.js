@@ -41,9 +41,9 @@ export function fetchByApplyStatus(query) {
   })
 }
 
-export function findLatest(id) {
+export function applyAndInterview(applyId, interviewType) {
   return request({
-    url: resUrl + '/apply/' + id,
+    url: resUrl + '/applyAndInterview?applyId=' + applyId + '&interviewType=' + interviewType,
     method: 'get'
   })
 }

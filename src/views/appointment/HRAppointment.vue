@@ -167,7 +167,7 @@
               for (const v of this.tableData) {
                 if (v.id === res.data.id) {
                   const index = this.tableData.indexOf(v)
-                  this.tableData.splice(index, 1, res.data)
+                  this.tableData.splice(index, 1)
                   break
                 }
               }
@@ -176,13 +176,6 @@
           const tempData = Object.assign({}, this.applyData)
           tempData.applyStatus = status
           applyApi.updateData(tempData.id, tempData).then(() => {
-            for (const v of this.tableData) {
-              if (v.id === this.applyData.id) {
-                const index = this.tableData.indexOf(v)
-                this.tableData.splice(index, 1)
-                break
-              }
-            }
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',

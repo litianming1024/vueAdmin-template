@@ -5,13 +5,13 @@
                         :data="tableData" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="35"></el-table-column>
       <!--<el-table-column type="expand">-->
-        <!--<template slot-scope="props">-->
-          <!--<el-form label-position="left" inline class="demo-table-expand">-->
-            <!--<el-form-item v-for="title in titles" :key="title.id" :label="title.label">-->
-              <!--<span>{{ props.row[title.prop] }}</span>-->
-            <!--</el-form-item>-->
-          <!--</el-form>-->
-        <!--</template>-->
+      <!--<template slot-scope="props">-->
+      <!--<el-form label-position="left" inline class="demo-table-expand">-->
+      <!--<el-form-item v-for="title in titles" :key="title.id" :label="title.label">-->
+      <!--<span>{{ props.row[title.prop] }}</span>-->
+      <!--</el-form-item>-->
+      <!--</el-form>-->
+      <!--</template>-->
       <!--</el-table-column>-->
       <el-table-column v-for="title in titles" :key="title.id" :prop="title.prop" :label="title.label" sortable="custom">
       </el-table-column>
@@ -41,6 +41,8 @@
       </preview>
       <div slot="footer" class="dialog-footer">
         <template v-if="applyData.applyStatus < 3">
+          <el-button type="success" @click="handleChangeApplyStatus(3)">通过</el-button>
+          <el-button type="danger" @click="handleChangeApplyStatus(1)">未通过</el-button>
         </template>
         <el-button @click="previewDialogVisible = false">取消</el-button>
       </div>
@@ -55,7 +57,7 @@
   import applyStatusType from '@/utils/applyStatusType'
 
   export default {
-    name: 'apply',
+    name: 'filter',
     components: { Preview },
     data() {
       return {
@@ -140,7 +142,7 @@
             align: 'center'
           },
           def: [{
-            name: '查看',
+            name: '筛选',
             type: 'primary',
             handler: row => {
               this.handlePreview(row)
@@ -153,7 +155,8 @@
     },
     methods: {
       loadData(queryInfo) {
-        return applyApi.fetchList(queryInfo).then(response => {
+        queryInfo.applyStatus = [0, 1, 2]
+        return applyApi.fetchByStatus(queryInfo).then(response => {
           this.tableData = response.data.content
           this.total = response.data.totalElements
         })

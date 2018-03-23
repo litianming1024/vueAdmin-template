@@ -76,6 +76,20 @@ export const constantRouterMap = [
     ]
   },
   {
+    path: '/filter',
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'filter',
+    children: [
+      {
+        path: 'filter',
+        name: 'filter',
+        component: _import('filter/filter'),
+        meta: { title: '简历筛选' }
+      }
+    ]
+  },
+  {
     path: '/weixin',
     component: Layout,
     redirect: 'noredirect',
@@ -100,20 +114,6 @@ export const constantRouterMap = [
     ]
   },
   {
-    path: '/schedule',
-    component: Layout,
-    redirect: 'noredirect',
-    name: 'schedule',
-    children: [
-      {
-        path: 'schedule',
-        // name: 'recruitment',
-        component: _import('schedule/schedule'),
-        meta: { title: '面试安排' }
-      }
-    ]
-  },
-  {
     path: '/appointment',
     component: Layout,
     redirect: 'noredirect',
@@ -129,6 +129,12 @@ export const constantRouterMap = [
       //   component: _import('system/index'),
       //   meta: { title: 'Form' }
       // },
+      {
+        path: 'schedule',
+        name: 'schedule',
+        component: _import('schedule/schedule'),
+        meta: { title: '面试安排' }
+      },
       {
         path: 'firstAppointment',
         name: 'firstAppointment',
