@@ -1,7 +1,7 @@
 <template>
   <div class="app-container calendar-list-container">
     <data-tables-server :total="total"
-                        :action-col-def="actionColDef" :load-data="loadData"
+                        :load-data="loadData"
                         :data="tableData">
       <el-table-column v-for="title in extraTitles" :key="title.id" :prop="title.prop" :label="title.label"
                        sortable="custom">
@@ -15,7 +15,6 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="面试时间" prop="interviewTime"/>
     </data-tables-server>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" center>
@@ -25,7 +24,7 @@
         <!--<el-input v-model="temp[title.prop]" placeholder="" type="textarea" autosize></el-input>-->
         <!--</el-form-item>-->
         <el-form-item label="面试时间">
-          <el-date-picker v-model="temp.latestAppointment.interviewTime" type="datetime" format="yyyy年MM月dd日 HH:mm" value-format="timestamp"></el-date-picker>
+          <el-date-picker v-model="temp.interviewTime" type="datetime" format="yyyy年MM月dd日 HH:mm" value-format="timestamp"></el-date-picker>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -117,7 +116,6 @@
           this.resetTemp()
           this.temp.applyId = this.applyData.id
           this.temp.interviewType = this.interviewType
-          this.temp.status = 0
         } else {
           appointmentApi.applyAndInterview(this.applyData.id, this.interviewType).then((res) => {
             this.temp = Object.assign({}, res.data)

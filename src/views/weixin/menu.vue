@@ -91,14 +91,13 @@
       </el-row>
       <div style="margin-top: 40px;text-align: center;padding-bottom:50px;">
         <el-button type="success" @click="submit">保存并发布</el-button>
-        <el-button>预览</el-button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-  import { fetchMenu } from '@/api/weixin/menu'
+  import * as menuApi from '@/api/weixin/menu'
 
   export default {
     name: 'menu',
@@ -124,10 +123,8 @@
         ]
       }
     },
-    created: {
-      getMenu() {
-
-      }
+    created() {
+      this.getMenu()
     },
     watch: {
       second_selected() {
@@ -153,8 +150,8 @@
     },
     methods: {
       getMenu() {
-        fetchMenu().then(response => {
-          this.menulist = response.button
+        menuApi.getData().then((res) => {
+          this.menulist = res.button
         })
       },
       changeContent(name, value) {
@@ -223,6 +220,7 @@
         this.changeContent('msgtype', type.value)
       },
       submit() {
+        menuApi.createData(this.menulist)
         this.deleteEl(this.menulist)
         console.log(this.menulist)
       },

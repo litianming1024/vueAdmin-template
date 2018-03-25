@@ -37,8 +37,8 @@
       <div slot="footer" class="dialog-footer">
         <el-button v-if="dialogStatus=='create'" type="primary" @click="createData">确认</el-button>
         <el-button v-if="dialogStatus=='delete'" type="danger" @click="deleteData">删除</el-button>
-        <el-button type="success" @click="handleChangeApplyStatus(7)">通过</el-button>
-        <el-button type="danger" @click="handleChangeApplyStatus(6)">未通过</el-button>
+        <el-button type="success" @click="handleChangeApplyStatus(11)">通过</el-button>
+        <el-button type="danger" @click="handleChangeApplyStatus(10)">未通过</el-button>
         <el-button v-if="dialogStatus=='update'" type="primary" @click="updateData">更新</el-button>
         <el-button @click="dialogFormVisible = false">取消</el-button>
       </div>
@@ -162,6 +162,11 @@
         // 不论通不通过都不在面试管理中显示
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
+            if (status === 11) {
+              this.temp.status = 3
+            } else {
+              this.temp.status = 2
+            }
             const tempData = Object.assign({}, this.temp)
             appointmentApi.updateData(tempData.id, tempData).then((res) => {
               for (const v of this.tableData) {

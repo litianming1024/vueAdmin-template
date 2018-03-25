@@ -162,6 +162,11 @@
         // 不论通不通过都不在面试管理中显示
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
+            if (status === 7) {
+              this.temp.status = 3
+            } else {
+              this.temp.status = 2
+            }
             const tempData = Object.assign({}, this.temp)
             appointmentApi.updateData(tempData.id, tempData).then((res) => {
               for (const v of this.tableData) {

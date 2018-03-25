@@ -1,11 +1,12 @@
 import request from '@/utils/request'
 
-const resUrl = '/wechat/menu'
+const resUrl = '/wechat/QRcode'
 
-export function getData() {
+export function fetchList(query) {
   return request({
     url: resUrl,
-    method: 'get'
+    method: 'get',
+    params: query
   })
 }
 

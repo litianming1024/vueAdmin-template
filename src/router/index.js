@@ -101,15 +101,15 @@ export const constantRouterMap = [
     children: [
       {
         path: 'menu',
-        name: 'user',
+        name: 'menu',
         component: _import('weixin/menu'),
         meta: { title: '菜单管理' }
       },
       {
-        path: 'menu',
-        name: 'user',
-        component: _import('weixin/menu'),
-        meta: { title: '菜单管理' }
+        path: 'qrcode',
+        name: 'qrcode',
+        component: _import('weixin/QRcode'),
+        meta: { title: '二维码管理' }
       }
     ]
   },
@@ -148,9 +148,9 @@ export const constantRouterMap = [
         meta: { title: '复试管理' }
       },
       {
-        path: 'permission',
-        name: 'permission',
-        component: _import('system/permission'),
+        path: 'HRAppointment',
+        name: 'HRAppointment',
+        component: _import('appointment/HRAppointment'),
         meta: { title: 'HR面试管理' }
       }
     ]
