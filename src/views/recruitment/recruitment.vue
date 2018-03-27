@@ -1,9 +1,8 @@
 <template>
   <div class="app-container calendar-list-container">
-    <data-tables-server :total="total" :actions-def="actionsDef" :checkbox-filter-def="checkFilterDef"
+    <data-tables-server :total="total" :actions-def="actionsDef"
                         :action-col-def="actionColDef" :load-data="loadData"
-                        :data="tableData" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="35"></el-table-column>
+                        :data="tableData">
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
@@ -16,17 +15,14 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column v-for="title in extraTitles" :key="title.id" :prop="title.prop" :label="title.label"
-                       sortable="custom">
+      <el-table-column v-for="title in extraTitles" :key="title.id" :prop="title.prop" :label="title.label">
       </el-table-column>
-      <el-table-column v-for="title in titles" :key="title.id" :prop="title.prop" :label="title.label"
-                       sortable="custom">
+      <el-table-column v-for="title in titles" :key="title.id" :prop="title.prop" :label="title.label">
       </el-table-column>
       <el-table-column label="状态">
         <template slot-scope="scope">
           <!--<el-tag :type="scope.row.status | statusFilter">{{statusType[scope.row.status].label}}</el-tag>-->
           <el-tag :type="statusType[scope.row.status].type">{{statusType[scope.row.status].label}}</el-tag>
-
         </template>
       </el-table-column>
     </data-tables-server>
@@ -119,25 +115,6 @@
             icon: 'el-icon-plus',
             handler: () => {
               this.handleCreate()
-            }
-          }, {
-            name: '导入',
-            icon: 'el-icon-upload',
-            handler: () => {
-              this.$message('import clicked')
-            }
-          }, {
-            name: '导出',
-            icon: 'el-icon-download',
-            handler: () => {
-              this.handleDownload()
-            }
-          }, {
-            name: '批量删除',
-            icon: 'el-icon-warning',
-            type: 'danger',
-            handler: () => {
-              this.handleDeleteSelection()
             }
           }]
         },

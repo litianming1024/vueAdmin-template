@@ -1,9 +1,9 @@
 <template>
   <div class="app-container calendar-list-container">
-    <data-tables-server :total="total" :actions-def="actionsDef" :checkbox-filter-def="checkFilterDef"
+    <data-tables-server :total="total"
                         :action-col-def="actionColDef" :load-data="loadData"
-                        :data="tableData" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="35"></el-table-column>
+                        :data="tableData">
+      <!--<el-table-column type="selection" width="35"></el-table-column>-->
       <!--<el-table-column type="expand">-->
         <!--<template slot-scope="props">-->
           <!--<el-form label-position="left" inline class="demo-table-expand">-->
@@ -39,6 +39,10 @@
     <el-dialog :visible.sync="previewDialogVisible" fullscreen center>
       <preview :data="previewData">
       </preview>
+      <el-table :data="applyData.appointments">
+        <el-table-column v-for="title in appointmentTitle" :key="title.id" :prop="title.prop" :label="title.label">
+        </el-table-column>
+      </el-table>
       <div slot="footer" class="dialog-footer">
         <template v-if="applyData.applyStatus < 3">
         </template>
@@ -89,6 +93,25 @@
         applyStatusType,
         applyData: {},
         rules: {},
+        appointmentTitle: [{
+          prop: 'id',
+          label: '序号'
+        }, {
+          prop: 'resumeId',
+          label: '简历序号'
+        }, {
+          prop: 'applyId',
+          label: '投递序号'
+        }, {
+          prop: 'basicInfoName',
+          label: '姓名'
+        }, {
+          prop: 'place',
+          label: '面试地点'
+        }, {
+          prop: 'comment',
+          label: '评价'
+        }],
         actionsDef: {
           colProps: {
             span: 12
@@ -120,19 +143,6 @@
             }
           }]
         },
-        checkFilterDef: {
-          colProps: {
-            span: 4
-          },
-          props: 'flow_type_code',
-          def: [{
-            'code': 'repair',
-            'name': 'Repair'
-          }, {
-            'code': 'help',
-            'name': 'Help'
-          }]
-        },
         actionColDef: {
           label: '操作',
           fixed: 'right',
@@ -144,6 +154,12 @@
             type: 'primary',
             handler: row => {
               this.handlePreview(row)
+            }
+          }, {
+            name: '删除',
+            type: 'danger',
+            handler: row => {
+              this.handleDelete(row)
             }
           }]
         }

@@ -1,10 +1,11 @@
-import { login, logout, getInfo } from '@/api/login'
+import { login, getInfo, logout } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
   state: {
+    id: '',
     token: getToken(),
-    name: '',
+    username: '',
     avatar: '',
     roles: []
   },
@@ -14,13 +15,16 @@ const user = {
       state.token = token
     },
     SET_NAME: (state, name) => {
-      state.name = name
+      state.username = name
     },
     SET_AVATAR: (state, avatar) => {
       state.avatar = avatar
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
+    },
+    SET_ID: (state, id) => {
+      state.id = id
     }
   },
 
@@ -43,11 +47,12 @@ const user = {
     // 获取用户信息
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        getInfo(state.token).then(response => {
+        getInfo().then(response => {
           const data = response.data
-          commit('SET_ROLES', data.role)
-          commit('SET_NAME', data.name)
-          commit('SET_AVATAR', data.avatar)
+          // commit('SET_ROLES', data.roles)
+          commit('SET_NAME', data.username)
+          commit('SET_ID', data.id)
+          // commit('SET_AVATAR', data.avatar)
           resolve(response)
         }).catch(error => {
           reject(error)

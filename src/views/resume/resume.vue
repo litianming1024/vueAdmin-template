@@ -1,24 +1,17 @@
 <template>
   <div class="app-container calendar-list-container">
-    <data-tables-server :total="total" :actions-def="actionsDef" :checkbox-filter-def="checkFilterDef"
+    <data-tables-server :total="total"
                         :action-col-def="actionColDef" :load-data="loadData"
-                        :data="tableData" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="35"></el-table-column>
-      <el-table-column type="expand">
-        <template slot-scope="props">
-          <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item v-for="title in extraTitles" :key="title.id" :label="title.label">
-              <span>{{ props.row[title.prop] }}</span>
-            </el-form-item>
-            <el-form-item v-for="title in titles" :key="title.id" :label="title.label">
-              <span>{{ props.row[title.prop] }}</span>
-            </el-form-item>
-          </el-form>
-        </template>
-      </el-table-column>
-      <el-table-column v-for="title in extraTitles" :key="title.id" :prop="title.prop" :label="title.label" sortable="custom">
+                        :data="tableData">
+      <!--:actions-def="actionsDef"-->
+      <el-table-column v-for="title in extraTitles" :key="title.id" :prop="title.prop" :label="title.label" >
       </el-table-column>
       <el-table-column v-for="title in titles" :key="title.id" :prop="title.prop" :label="title.label" sortable="custom">
+      </el-table-column>
+      <el-table-column label="性别">
+        <template slot-scope="scope">
+          <span>{{ sexOptions[scope.row.basicInfo.sex].label }}</span>
+        </template>
       </el-table-column>
     </data-tables-server>
 
@@ -62,23 +55,14 @@
           label: '序号'
         }],
         titles: [{
-          prop: 'name',
-          label: '职位名称'
+          prop: 'basicInfo.name',
+          label: '姓名'
         }, {
-          prop: 'workplace',
-          label: '工作地点'
+          prop: 'basicInfo.tel',
+          label: '手机'
         }, {
-          prop: 'category',
-          label: '职位类别'
-        }, {
-          prop: 'responsibility',
-          label: '工作职责'
-        }, {
-          prop: 'requirement',
-          label: '工作要求'
-        }, {
-          prop: 'type',
-          label: '招聘渠道'
+          prop: 'basicInfo.email',
+          label: '邮箱'
         }],
         temp: {
           name: '',
@@ -88,6 +72,11 @@
           requirement: '',
           type: ''
         },
+        sexOptions: [{
+          label: '男'
+        }, {
+          label: '女'
+        }],
         previewDialogVisible: false,
         downloadLoading: false,
         dialogFormVisible: false,
@@ -108,25 +97,6 @@
             icon: 'el-icon-plus',
             handler: () => {
               this.handleCreate()
-            }
-          }, {
-            name: '导入',
-            icon: 'el-icon-upload',
-            handler: () => {
-              this.$message('import clicked')
-            }
-          }, {
-            name: '导出',
-            icon: 'el-icon-download',
-            handler: () => {
-              this.handleDownload()
-            }
-          }, {
-            name: '批量删除',
-            icon: 'el-icon-warning',
-            type: 'danger',
-            handler: () => {
-              this.handleDeleteSelection()
             }
           }]
         },

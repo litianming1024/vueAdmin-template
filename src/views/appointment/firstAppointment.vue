@@ -4,13 +4,17 @@
                         :action-col-def="actionColDef"
                         :load-data="loadData"
                         :data="tableData">
-      <el-table-column v-for="title in extraTitles" :key="title.id" :prop="title.prop" :label="title.label"
-                       sortable="custom">
+      <el-table-column v-for="title in extraTitles" :key="title.id" :prop="title.prop" :label="title.label">
       </el-table-column>
-      <el-table-column label="面试时间"
-                       sortable="custom">
+      <el-table-column label="面试时间">
         <template slot-scope="scope">
           <span>{{scope.row.interviewTime | parseTime('{y}-{m}-{d} {h}:{i}')}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="到场时间">
+        <template slot-scope="scope">
+          <span
+            v-if="scope.row.presentTime !== null">{{scope.row.presentTime | parseTime('{y}-{m}-{d} {h}:{i}')}}</span>
         </template>
       </el-table-column>
       <el-table-column label="状态">
@@ -19,17 +23,35 @@
           </el-tag>
         </template>
       </el-table-column>
+      <el-table-column v-for="title in titles" :key="title.id" :prop="title.prop" :label="title.label">
+      </el-table-column>
     </data-tables-server>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" center fullscreen>
       <el-form v-if="dialogStatus!='delete'" :rules="rules" ref="dataForm" :model="temp" label-width="100px">
         <!--label-position="left" label-width="70px" style='width: 400px; margin-left:50px;'-->
-        <el-form-item label="投递序号">
-          <span>{{temp.applyId}}</span>
+        <el-form-item v-for="title in extraTitles" :label="title.label" :key="title.prop">
+          <span>{{temp[title.prop]}}</span>
         </el-form-item>
-        <el-form-item label="简历序号">
-          <span>{{temp.resumeId}}</span>
+
+        <el-form-item label="面试时间">
+          <template>
+            <span>{{temp.interviewTime | parseTime('{y}-{m}-{d} {h}:{i}')}}</span>
+          </template>
         </el-form-item>
+        <el-form-item label="到场时间">
+          <template>
+            <span
+              v-if="temp.presentTime !== null">{{temp.presentTime | parseTime('{y}-{m}-{d} {h}:{i}')}}</span>
+          </template>
+        </el-form-item>
+        <el-form-item label="状态">
+          <template slot-scope="scope">
+            <el-tag :type="applyStatusType[temp.applyStatus].type">{{applyStatusType[temp.applyStatus].label}}
+            </el-tag>
+          </template>
+        </el-form-item>
+
         <el-form-item v-for="title in titles" :key="title.prop" :label="title.label" :model="temp[title.prop]">
           <el-input v-model="temp[title.prop]" placeholder="" type="textarea" autosize></el-input>
         </el-form-item>
@@ -66,6 +88,12 @@
         }, {
           prop: 'applyId',
           label: '投递序号'
+        }, {
+          prop: 'basicInfoName',
+          label: '姓名'
+        }, {
+          prop: 'place',
+          label: '面试地点'
         }],
         titles: [{
           prop: 'comment',
@@ -109,8 +137,7 @@
     },
     methods: {
       loadData(queryInfo) {
-        queryInfo.applyStatus = [5]
-        return appointmentApi.fetchByApplyStatus(queryInfo).then(response => {
+        return appointmentApi.needToInterview(queryInfo, 0, 1).then(response => {
           this.tableData = response.data.content
           this.total = response.data.totalElements
         })
@@ -159,7 +186,7 @@
         this.dialogFormVisible = true
       },
       handleChangeApplyStatus(status) {
-        // 不论通不通过都不在面试管理中显示
+        // 不论通不通过都不在面试管理中显示, 0未安排，1已安排，2未通过，3已通过
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             if (status === 7) {

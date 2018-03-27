@@ -16,7 +16,7 @@ import '@/icons' // icon
 import '@/permission' // permission control
 import DataTables from 'vue-data-tables'
 import { DataTablesServer } from 'vue-data-tables'
-import './mock'
+// import './mock'
 
 import * as filters from './filters'
 

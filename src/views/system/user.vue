@@ -1,6 +1,6 @@
 <template>
   <div class="app-container calendar-list-container">
-    <data-tables-server :total="total" :actions-def="actionsDef" :checkbox-filter-def="checkFilterDef"
+    <data-tables-server :total="total" :actions-def="actionsDef"
                         :action-col-def="actionColDef" :load-data="loadData"
                         :data="tableData">
       <el-table-column v-for="title in titles" :key="title.prop" :prop="title.prop" :label="title.label" sortable="custom">
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-  import * as permissionApi from '@/api/system/permission'
+  import * as userApi from '@/api/system/user'
 
   export default {
     name: 'user',
@@ -42,7 +42,6 @@
           prop: 'accountNonExpired',
           label: '过期'
         }],
-        formItem: [{}],
         downloadLoading: false,
         dialogFormVisible: false,
         dialogFormEdit: Boolean, // 默认表单可以编辑
@@ -70,31 +69,6 @@
               this.handleCreate()
               this.$message('add clicked')
             }
-          }, {
-            name: '导入',
-            icon: 'el-icon-upload',
-            handler: () => {
-              this.$message('import clicked')
-            }
-          }, {
-            name: '导出',
-            icon: 'el-icon-download',
-            handler: () => {
-              this.handleDownload()
-            }
-          }]
-        },
-        checkFilterDef: {
-          colProps: {
-            span: 8
-          },
-          props: 'flow_type_code',
-          def: [{
-            'code': 'repair',
-            'name': 'Repair'
-          }, {
-            'code': 'help',
-            'name': 'Help'
           }]
         },
         actionColDef: {
@@ -128,7 +102,7 @@
     },
     methods: {
       loadData(queryInfo) {
-        return permissionApi.fetchList(queryInfo).then(response => {
+        return userApi.fetchList(queryInfo).then(response => {
           console.log(response)
           this.tableData = response.data.content
           this.total = response.data.totalElements
@@ -151,7 +125,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             console.log(this.temp)
-            permissionApi.createData(this.temp).then(() => {
+            userApi.createData(this.temp).then(() => {
               this.list.unshift(this.temp)
               this.dialogFormVisible = false
               this.$notify({
@@ -163,7 +137,7 @@
           }
         })
       },
-      handlePreview(row) {
+      handleUpdate(row) {
         this.dialogFormEditChange(false)
         this.temp = Object.assign({}, row) // copy obj
         this.dialogStatus = 'update'
@@ -177,7 +151,7 @@
           if (valid) {
             const tempData = Object.assign({}, this.temp)
             // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-            permissionApi.updateData(tempData.id, tempData).then(() => {
+            userApi.updateData(tempData.id, tempData).then(() => {
               for (const v of this.tableData) {
                 if (v.id === this.temp.id) {
                   const index = this.tableData.indexOf(v)
@@ -202,7 +176,7 @@
       },
       deleteData() {
         const tempData = Object.assign({}, this.temp)
-        permissionApi.deleteData(tempData.id).then(() => {
+        userApi.deleteData(tempData.id).then(() => {
           for (const v of this.tableData) {
             if (v.id === this.temp.id) {
               const index = this.tableData.indexOf(v)

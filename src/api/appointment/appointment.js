@@ -47,3 +47,15 @@ export function applyAndInterview(applyId, interviewType) {
     method: 'get'
   })
 }
+
+export function needToInterview(query, interviewType, status) {
+  return request({
+    url: resUrl + '/needToInterview',
+    method: 'get',
+    params: {
+      interviewType: interviewType,
+      status: status,
+      query
+    }
+  })
+}

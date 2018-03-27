@@ -151,7 +151,8 @@
     methods: {
       getMenu() {
         menuApi.getData().then((res) => {
-          this.menulist = res.button
+          this.menulist = res.data.menu.buttons
+          console.log(res.data.menu.buttons)
         })
       },
       changeContent(name, value) {
@@ -220,7 +221,10 @@
         this.changeContent('msgtype', type.value)
       },
       submit() {
-        menuApi.createData(this.menulist)
+        const data = {
+          buttons: this.menulist
+        }
+        menuApi.createData(data)
         this.deleteEl(this.menulist)
         console.log(this.menulist)
       },
